@@ -14,7 +14,7 @@ const makeAuthRouter = (db: Knex) => {
 
   router.get('/', getUser(db), (req, res) => {
     const { user } = req as UserRequest;
-    res.json()
+    res.json();
     if (!user) {
       res.json({});
       return;
@@ -25,55 +25,65 @@ const makeAuthRouter = (db: Knex) => {
       role: user.role,
     });
   });
-  
-  router.post('/login', asyncHandler(async (req, res) => {
-    const r = req as UserRequest;
-    const { login, password } = req.body;
-    if (!login || !password) {
-      throw new BadRequest();
-    }
-    const user = await db('users').where({ login, deleted: 0, disabled: 0 }).first();
-    if (!user) {
-      await fakeDelay();
-      throw new Forbidden('Incorrect username or password');
-    }
-    const matches = await bcrypt.compare(password, user.password);
-    if (!matches) {
-      throw new Forbidden('Incorrect username or password');
-    }
-    const now = new Date();
-    const session = {
-      created_at: now,
-      ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress,
-      updated_at: now,
-      user_agent: req.headers['user-agent'],
-      user_id: user.id,
-    };
-    const [sessionId] = await db('sessions').insert(session);
-    if (r.session) {
-      r.session.id = sessionId;
-    }
-    res.json({
-      id: user.id,
-      name: user.name,
-      role: user.role,
-    });
-  }));
-  
-  router.post('/logout', asyncHandler(async (req, res) => {
-    const r = req as UserRequest;
-    if (r.session) {
-      if (r.session.id) {
-        await db('sessions').where({ id: r.session.id }).update({
-          ended_at: new Date(),
-        });
-      }
-      r.session.id = null;
-    }
-    res.json({});
-  }));
 
-  return router;  
+  router.post(
+    '/login',
+    asyncHandler(async (req, res) => {
+      const r = req as UserRequest;
+      const { login, password } = req.body;
+      if (!login || !password) {
+        throw new BadRequest();
+      }
+      const user = await db('users')
+        .where({ login, deleted: 0, disabled: 0 })
+        .first();
+      if (!user) {
+        await fakeDelay();
+        throw new Forbidden('Incorrect username or password');
+      }
+      const matches = await bcrypt.compare(password, user.password);
+      if (!matches) {
+        throw new Forbidden('Incorrect username or password');
+      }
+      const now = new Date();
+      const session = {
+        created_at: now,
+        ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress,
+        updated_at: now,
+        user_agent: req.headers['user-agent'],
+        user_id: user.id,
+      };
+      const [sessionId] = await db('sessions').insert(session);
+      if (r.session) {
+        r.session.id = sessionId;
+      }
+      res.json({
+        id: user.id,
+        name: user.name,
+        role: user.role,
+      });
+    }),
+  );
+
+  router.post(
+    '/logout',
+    asyncHandler(async (req, res) => {
+      const r = req as UserRequest;
+      if (r.session) {
+        if (r.session.id) {
+          await db('sessions')
+            .where({ id: r.session.id })
+            .update({
+              ended_at: new Date(),
+            });
+        }
+        r.session.id = null;
+      }
+      res.json({});
+    }),
+  );
+
+  return router;
 };
 
 export default makeAuthRouter;

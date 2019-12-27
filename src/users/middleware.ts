@@ -21,7 +21,7 @@ export const getUser: (db: Knex) => RequestHandler = db => (request, res, next) 
   const sessionId = req.session && req.session.id;
   if (sessionId) {
     getUserBySessionId(db, sessionId)
-      .then((user) => {
+      .then(user => {
         if (user) {
           req.user = user;
         }

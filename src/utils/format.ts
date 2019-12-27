@@ -1,5 +1,7 @@
 export const pad = (template: string, str: string | number, padLeft = true) => {
-  if (typeof str === 'undefined') { return template; }
+  if (typeof str === 'undefined') {
+    return template;
+  }
   if (padLeft) {
     return (template + str).slice(-template.length);
   }
@@ -30,7 +32,7 @@ export const timeStr = (date: Date) => {
 export const dateTimeStr = (date: Date) => `${dateStr(date)} ${timeStr(date)}`;
 
 export const shortName = (fullName: string) => {
-  const p = (`${fullName.trim()}  `).split(' ');
+  const p = `${fullName.trim()}  `.split(' ');
   const last = p[0];
   const first = p[1];
   const middle = p[2];
