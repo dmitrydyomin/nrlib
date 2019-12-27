@@ -4,11 +4,11 @@ import WebSocket from 'ws';
 
 import { UserRequest } from '../users/middleware.d';
 
-const bus = new EventEmitter();
+export const bus = new EventEmitter();
 
 const clients: WebSocket[] = [];
 
-const wsHandler = (ws: WebSocket, req: Request) => {
+export const wsHandler = (ws: WebSocket, req: Request) => {
   const r = req as UserRequest;
   if (!r.user) {
     ws.close();
@@ -32,13 +32,7 @@ const wsHandler = (ws: WebSocket, req: Request) => {
   clients.push(ws);
 };
 
-const broadcast = (type: string, payload: any) => {
+export const broadcast = (type: string, payload: any) => {
   const message = JSON.stringify({ type, payload });
   clients.forEach(cl => cl.send(message));
-};
-
-module.exports = {
-  broadcast,
-  bus,
-  wsHandler,
 };
