@@ -1,13 +1,13 @@
 {
-  "name": "nrlib-ts",
-  "version": "1.0.0",
+  "name": "nrlib",
+  "version": "1.0.5",
   "description": "",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
     "build": "tsc",
     "prepare" : "npm run build",
-    "prepublishOnly" : "npm test && npm run lint",
+    "prepublishOnly" : "npm run lint",
     "preversion" : "npm run lint",
     "version" : "npm run format && git add -A src",
     "postversion" : "git push && git push --tags",
