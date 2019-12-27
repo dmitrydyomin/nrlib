@@ -4,8 +4,10 @@
     "module": "commonjs",
     "declaration": true,
     "outDir": "./lib",
+    "esModuleInterop": true,
     "strict": true
   },
   "include": ["src"],
+  "files": ["./src/custom.d.ts"],
   "exclude": ["node_modules", "**/__tests__/*"]
 }
