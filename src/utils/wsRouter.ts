@@ -9,39 +9,32 @@ export type WSHandler = (ws: WebSocket, req: Request) => void;
 
 type BaseServer = http.Server | https.Server;
 type WSRoute = {
-  middleware: RequestHandler[],
-  wss: WebSocket.Server,
+  middleware: RequestHandler[];
+  wss: WebSocket.Server;
 };
 type WSRoutes = { [key: string]: WSRoute };
 
 type WSRouteHandlerArgs = {
-  head: Buffer,
-  middleware: RequestHandler[],
-  req: Request,
-  socket: Socket,
-  wss: WebSocket.Server,
+  head: Buffer;
+  middleware: RequestHandler[];
+  req: Request;
+  socket: Socket;
+  wss: WebSocket.Server;
 };
 
 type MyRef = {
-  current?: any,
+  current?: any;
 };
 
-const fakeRes = {
+const fakeRes = ({
   getHeader() {
     return '';
   },
   // tslint:disable-next-line: no-empty
-  setHeader() {
-  },
-} as unknown as Response;
+  setHeader() {},
+} as unknown) as Response;
 
-const routeHandler = ({
-  head,
-  middleware,
-  req,
-  socket,
-  wss,
-}: WSRouteHandlerArgs) => {
+const routeHandler = ({ head, middleware, req, socket, wss }: WSRouteHandlerArgs) => {
   const mw = [...middleware];
   const handle: MyRef = {};
   handle.current = (err?: Error) => {
@@ -53,7 +46,7 @@ const routeHandler = ({
         f(req, fakeRes, handle.current);
       }
     } else {
-      wss.handleUpgrade(req, socket, head, (ws) => {
+      wss.handleUpgrade(req, socket, head, ws => {
         wss.emit('connection', ws, req);
       });
     }
@@ -89,7 +82,7 @@ const init = (server: BaseServer) => {
     path: (path: string, middleware: RequestHandler[], handler: WSHandler) => {
       const wss = new WebSocket.Server({ noServer: true });
       routes[path] = { middleware, wss };
-      wss.on('connection', handler as unknown as WSHandler);
+      wss.on('connection', (handler as unknown) as WSHandler);
     },
   };
 };

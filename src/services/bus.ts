@@ -34,7 +34,7 @@ const wsHandler = (ws: WebSocket, req: Request) => {
 
 const broadcast = (type: string, payload: any) => {
   const message = JSON.stringify({ type, payload });
-  clients.forEach((cl) => cl.send(message));
+  clients.forEach(cl => cl.send(message));
 };
 
 module.exports = {
