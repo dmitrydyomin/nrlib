@@ -14,7 +14,6 @@ const makeAuthRouter = (db: Knex) => {
 
   router.get('/', getUser(db), (req, res) => {
     const { user } = req as UserRequest;
-    res.json();
     if (!user) {
       res.json({});
       return;
